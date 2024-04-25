@@ -42,3 +42,70 @@ application {
     // Define the main class for the application.
     mainClass = 'org.example.App'
 }
+
+task hello{
+    println 'Hello Gradle'
+}
+
+task createSomething {
+    println 'createSomething'
+}
+
+task loadTestData {
+    dependsOn createSomething
+    doLast {
+        println 'loadTestData'
+    }
+
+}
+
+//выбираем первую команду
+loadTestData.doFirst {
+    println 'started loading test data'
+}
+
+
+task conditionTask {
+    //property condition задавать через Pcondition=<value>, пример
+    // gradle conditionTask -Pcondition=false
+    def condition = project.hasProperty('condition') ? project.property('condition') : 'true'
+
+    onlyIf {
+        return condition.toBoolean()
+    }
+
+    doLast {
+        println 'Выполнение задачи conditionTask'
+    }
+}
+
+//didWork - свойство задачи. didWork = true - задача отработала
+//
+task firstTask{
+    doLast {
+        println 'First task is executing'
+        didWork = true //указываем, что задача выполнила поставленную цель
+    }
+}
+
+task secondTask{
+    doLast {
+        if (project.hasProperty('skipSecondTask') && project.skipSecondTask.toBoolean()) {
+            println "Second task is skipped... "
+            didWork = false
+        } else {
+            println "Second task is executed"
+            didWork = true
+        }
+    }
+}
+
+task thirdTask(dependsOn: secondTask){ //теперь при запуске thirdTask также запустится secondTask
+    doLast {
+        if (secondTask.didWork) {
+            println "Task 3 is joined"
+        } else {
+            println "Task 3 is not joined"
+        }
+    }
+}
