@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id("io.freefair.lombok") version "8.6"
 }
 
 repositories {
@@ -19,6 +20,9 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation libs.guava
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.2'
+
 }
 
 testing {
